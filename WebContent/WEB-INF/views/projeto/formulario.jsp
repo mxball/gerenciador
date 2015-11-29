@@ -4,9 +4,10 @@
 
 <html>
 <body>
-    <h3>Adicionar Equipe</h3>
-    <form action="adicionaEquipe" method="post">
-        Nome: <textarea rows="1" cols="20" name="nome">${equipe.nome}</textarea><br/>
+    <h3>Adicionar Projeto</h3>
+    <form action="adicionaProjeto" method="post">
+        <input type="hidden" name="id" value="${equipe.id}">
+        Nome: <textarea rows="1" cols="20" name="nome">${projeto.nome}</textarea><br/>
         <input type="submit" value="Adicionar">
     </form>
 </body>

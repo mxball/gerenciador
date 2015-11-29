@@ -9,18 +9,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.caelum.tarefas.dao.JdbcTarefaDao;
-import br.com.caelum.tarefas.modelo.Equipe;
+import br.com.caelum.tarefas.dao.TarefaDao;
+import br.com.caelum.tarefas.modelo.Projeto;
 import br.com.caelum.tarefas.modelo.Tarefa;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Controller
 public class TarefasController {
 
-		private JdbcTarefaDao dao;
+		private TarefaDao dao;
 
 		@Autowired
-		public TarefasController(JdbcTarefaDao dao) {
+		public TarefasController(TarefaDao dao) {
 			this.dao = dao;
 		}
 	
@@ -29,28 +29,35 @@ public class TarefasController {
 			return "tarefa/formulario";
 		}
 		
+		@RequestMapping("novaTarefaProjeto")
+		public String formProjeto(Projeto projeto, Model model) {
+			model.addAttribute("projeto", projeto);
+			return "projeto/form";
+		}
+		
 		@RequestMapping("adicionaTarefaPessoal")
 		public String adicionaTPessoal(Tarefa tarefa, HttpSession session) {
 			tarefa.setStatus("ToDo");
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
-			tarefa.setUsuario_id(usuario.getId().intValue());
+			tarefa.setUsuario_id(usuario.getId());
 			dao.adiciona(tarefa);
 			return "tarefa/adicionada";
 		}
 		
-		@RequestMapping("adicionaTarefaEquipe")
+		@RequestMapping("adicionaTarefaProjeto")
 		public String adicionaTProjeto(Tarefa tarefa, HttpSession session) {
 			tarefa.setStatus("ToDo");
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
-			tarefa.setProjeto_id(tarefa.getProjeto_id());
+			tarefa.setUsuario_id(null);
 			dao.adiciona(tarefa);
 			return "tarefa/adicionada";
 		}
 	
 	
 		@RequestMapping("listaTarefas")
-		public String lista(Model model) {
-			model.addAttribute("tarefas", dao.lista());
+		public String lista(Model model, HttpSession session) {
+			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+			model.addAttribute("tarefas", dao.lista(usuario));
 			return "tarefa/lista";
 		}
 		

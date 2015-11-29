@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
-public class JdbcUsuarioDao {
+public class UsuarioDao {
 	private Connection connection;
 
 	@Autowired
-	public JdbcUsuarioDao(DataSource dataSource) {
+	public UsuarioDao(DataSource dataSource) {
 		try {
 			connection = dataSource.getConnection();
 		} catch (SQLException e) {

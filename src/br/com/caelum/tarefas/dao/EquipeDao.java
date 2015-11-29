@@ -16,12 +16,12 @@ import br.com.caelum.tarefas.modelo.Equipe;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
-public class JdbcEquipeDao {
+public class EquipeDao {
 
 	private Connection connection;
 
 	@Autowired
-	public JdbcEquipeDao(DataSource dataSource) {
+	public EquipeDao(DataSource dataSource) {
 		try {
 			this.connection = dataSource.getConnection();
 		} catch (SQLException e) {
@@ -53,22 +53,46 @@ public class JdbcEquipeDao {
 			e.printStackTrace();
 		}
 	}
-	
-	public List<Equipe> lista(Usuario usuario){
+
+	public List<Equipe> buscaPorId(int id) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("select * from equipe where id = ?");
-			stmt.setLong(1, usuario.getId());
+			PreparedStatement stmt = connection.prepareStatement("select * from Equipe where id = ?");
+			stmt.setInt(1, id);
 			ResultSet set = stmt.executeQuery();
 			List<Equipe> lista = new ArrayList<Equipe>();
 			
-			stmt.close();
 			while (set.next()) {
-				lista.add((Equipe) set);
+				Equipe equipe = new Equipe();
+				equipe.setId(set.getLong(1));
+				equipe.setNome(set.getString(2));
+				lista.add(equipe);
 			}
+			stmt.close();
 			return lista;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<Equipe> buscaPorNome(Equipe equipe) {
+		try {
+			PreparedStatement stmt = connection.prepareStatement("select * from Equipe where nome like ?");
+			stmt.setString(1, equipe.getNome());
+			ResultSet set = stmt.executeQuery();
+			List<Equipe> lista = new ArrayList<Equipe>();
+			
+			while (set.next()) {
+				Equipe equipeLoaded = new Equipe();
+				equipeLoaded.setId(set.getLong(1));
+				equipeLoaded.setNome(set.getString(2));
+				lista.add(equipeLoaded);
+			}
+			stmt.close();
+			return lista;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;		
 	}
 }

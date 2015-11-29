@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,14 +15,16 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.caelum.tarefas.modelo.Projeto;
 import br.com.caelum.tarefas.modelo.Tarefa;
+import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
-public class JdbcTarefaDao {
+public class TarefaDao {
 	private final Connection connection;
 
 	@Autowired
-	public JdbcTarefaDao(DataSource dataSource) {
+	public TarefaDao(DataSource dataSource) {
 		try {
 			this.connection = dataSource.getConnection();
 		} catch (SQLException e) {
@@ -31,8 +34,8 @@ public class JdbcTarefaDao {
 
 	public void adiciona(Tarefa tarefa) {
 		String sql = "insert into tarefa "
-				+ "(descricao, dtInicio, dtFim, dtPrazo, status, usuario_id) "
-				+ "values (?,?,?,?, ?, ?)";
+				+ "(descricao, dtInicio, dtFim, dtPrazo, status, usuario_id, projeto_id) "
+				+ "values (?,?,?,?,?,?,?)";
 		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
@@ -42,10 +45,17 @@ public class JdbcTarefaDao {
 			stmt.setDate(4, new Date(tarefa.getDtPrazo().getTimeInMillis()));
 			stmt.setString(5, tarefa.getStatus());
 			if(tarefa.getUsuario_id() != null){
+				System.out.println("Porqueee!!!!");
 				stmt.setLong(6, tarefa.getUsuario_id());
 			}
 			else {
-				stmt.setLong(6, tarefa.getProjeto_id());
+				stmt.setNull(6, Types.INTEGER);
+			}
+			if(tarefa.getProjeto_id() != null){
+				stmt.setLong(7, tarefa.getProjeto_id());
+			}
+			else {
+				stmt.setNull(7, Types.INTEGER);
 			}
 			
 		
@@ -93,11 +103,33 @@ public class JdbcTarefaDao {
 		}
 	}
 
-	public List<Tarefa> lista() {
+	public List<Tarefa> lista(Usuario usuario) {
 		try {
 			List<Tarefa> tarefas = new ArrayList<Tarefa>();
 			PreparedStatement stmt = this.connection
-					.prepareStatement("select * from tarefa");
+					.prepareStatement("select * from tarefa where usuario_id = ? ");
+			stmt.setLong(1, usuario.getId());
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				// adiciona a tarefa na lista
+				tarefas.add(populaTarefa(rs));
+			}
+
+			rs.close();
+			stmt.close();
+
+			return tarefas;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	public List<Tarefa> lista(Projeto projeto) {
+		try {
+			List<Tarefa> tarefas = new ArrayList<Tarefa>();
+			PreparedStatement stmt = this.connection
+					.prepareStatement("select * from tarefa where projeto_id = ?");
+			stmt.setLong(1, projeto.getId());
 
 			ResultSet rs = stmt.executeQuery();
 
@@ -148,6 +180,8 @@ public class JdbcTarefaDao {
 		tarefa.setId(rs.getLong("id"));
 		tarefa.setDescricao(rs.getString("descricao"));
 		tarefa.setStatus(rs.getString("status"));
+		tarefa.setProjeto_id(rs.getLong("projeto_id"));
+		tarefa.setUsuario_id(rs.getLong("usuario_id"));
 
 		// popula a data de finalizacao da tarefa, fazendo a conversao
 		Date data = rs.getDate("dtInicio");
@@ -168,6 +202,8 @@ public class JdbcTarefaDao {
 			dataPrazo.setTime(dataP);
 			tarefa.setDtInicio(dataPrazo);
 		}
+		
 		return tarefa;
 	}
+
 }

@@ -1,3 +1,4 @@
+
 package br.com.caelum.tarefas.dao;
 
 import java.sql.Connection;
@@ -12,15 +13,16 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.caelum.tarefas.modelo.Equipe;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
-public class JdbcPertenceADao {
+public class PertenceADao {
 
 	private Connection connection;
 
 	@Autowired
-	public JdbcPertenceADao(DataSource dataSource) {
+	public PertenceADao(DataSource dataSource) {
 		try {
 			this.connection = dataSource.getConnection();
 		} catch (SQLException e) {
@@ -28,22 +30,24 @@ public class JdbcPertenceADao {
 		}
 	}
 	
-	public List<String> getEquipeDoUsuario(Usuario usuario){
+	public List<Equipe> getEquipeDoUsuario(Usuario usuario){
 		try {
 			System.out.println("ID " + usuario.getId());
-			String sql = "select e.nome from pertence_a p right join equipe e"
+			String sql = "select e.id,e.nome from pertence_a p right join equipe e"
 					+ " on p.equipe_id = e.id "
 					+ " where p.usuario_id = ?";
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setLong(1, usuario.getId());
 			ResultSet set = stmt.executeQuery();
-			List<String> list = new ArrayList<String>();
+			List<Equipe> list = new ArrayList<Equipe>();
 			while (set.next()) {
-				String x = set.getString(1);
-				System.out.println(x);
-				list.add(x);
+				Equipe equipe = new Equipe();
+				equipe.setId(set.getLong(1));
+				equipe.setNome(set.getString(2));
+				list.add(equipe);
 			}
 			System.out.println("vazio");
+			stmt.close();
 			return list;
 			
 		} catch (SQLException e) {

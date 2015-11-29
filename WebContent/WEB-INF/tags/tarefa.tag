@@ -6,16 +6,18 @@
 
 <td>
     <c:if test="${tarefa.status eq status}">
-		<p>${tarefa.id}</p>
-		<p>${tarefa.descricao}</p>
-		<p>
+		<p>Descrição: ${tarefa.descricao}</p>
+		<p>Inicio: 
 			<fmt:formatDate value="${tarefa.dtInicio.time}" pattern="dd/MM/yyyy" />
 		</p>
-		<p>
+		<p>Fim:
 			<fmt:formatDate value="${tarefa.dtFim.time}" pattern="dd/MM/yyyy" />
 		</p>
-		<p>
+		<p>Prazo:
 			<fmt:formatDate value="${tarefa.dtPrazo.time}" pattern="dd/MM/yyyy" />
+		</p>
+		<p>
+		   <a href="alteraStatus?id=${tarefa.id}">Status</a>
 		</p>
 		<p>
 			<a href="removeTarefa?id=${tarefa.id}">Remover</a>

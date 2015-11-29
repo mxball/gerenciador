@@ -16,8 +16,8 @@ public class Tarefa {
 	private Calendar dtPrazo;
 	private String status;
 	
-	private Integer usuario_id;
-	private Integer projeto_id;
+	private Long usuario_id;
+	private Long projeto_id;
 	
 	public Long getId() {
 		return id;
@@ -55,16 +55,16 @@ public class Tarefa {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public Integer getUsuario_id() {
+	public Long getUsuario_id() {
 		return usuario_id;
 	}
-	public void setUsuario_id(int usuario_id) {
+	public void setUsuario_id(Long usuario_id) {
 		this.usuario_id = usuario_id;
 	}
-	public Integer getProjeto_id() {
+	public Long getProjeto_id() {
 		return projeto_id;
 	}
-	public void setProjeto_id(int projeto_id) {
+	public void setProjeto_id(Long projeto_id) {
 		this.projeto_id = projeto_id;
 	}
 	

@@ -4,7 +4,8 @@
 <html>
 <body>
 	<h3>Adicionar tarefas</h3>
-	<form action="adicionaTarefaPessoal" method="post">
+	<form action="adicionaTarefaEquipe" method="post">
+	   <input type="hidden" name="projeto_id" value="${tarefa.projeto_id}">
 	   Descrição: <br/>
         <textarea rows="5" cols="100" name="descricao">${tarefa.descricao}</textarea><br/>
 		Data inicio:<input type="date" name="dtInicio" id="dtInicio" value="${tarefa.dtInicio.time}"><br>

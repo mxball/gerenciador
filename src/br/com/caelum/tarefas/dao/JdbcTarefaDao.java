@@ -31,14 +31,22 @@ public class JdbcTarefaDao {
 
 	public void adiciona(Tarefa tarefa) {
 		String sql = "insert into tarefa "
-				+ "(dtInicio, dtFim, dtPrazo) "
-				+ "values (?,?,?)";
+				+ "(descricao, dtInicio, dtFim, dtPrazo, status, usuario_id) "
+				+ "values (?,?,?,?, ?, ?)";
 		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			stmt.setDate(1, new Date(tarefa.getDtInicio().getTimeInMillis()));
-			stmt.setDate(2, new Date(tarefa.getDtFim().getTimeInMillis()));
-			stmt.setDate(3, new Date(tarefa.getDtPrazo().getTimeInMillis()));
+			stmt.setString(1, tarefa.getDescricao());
+			stmt.setDate(2, new Date(tarefa.getDtInicio().getTimeInMillis()));
+			stmt.setDate(3, new Date(tarefa.getDtFim().getTimeInMillis()));
+			stmt.setDate(4, new Date(tarefa.getDtPrazo().getTimeInMillis()));
+			stmt.setString(5, tarefa.getStatus());
+			if(tarefa.getUsuario_id() != null){
+				stmt.setLong(6, tarefa.getUsuario_id());
+			}
+			else {
+				stmt.setLong(6, tarefa.getProjeto_id());
+			}
 			
 		
 			stmt.execute();
@@ -138,6 +146,8 @@ public class JdbcTarefaDao {
 
 		// popula o objeto tarefa
 		tarefa.setId(rs.getLong("id"));
+		tarefa.setDescricao(rs.getString("descricao"));
+		tarefa.setStatus(rs.getString("status"));
 
 		// popula a data de finalizacao da tarefa, fazendo a conversao
 		Date data = rs.getDate("dtInicio");

@@ -47,4 +47,35 @@ public class JdbcUsuarioDao {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public Usuario busca(String nome) {
+		try {
+			PreparedStatement stmt = this.connection
+					.prepareStatement("select * from usuario where nome like ?");
+			stmt.setString(1, nome);
+
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				return populaUsuario(rs);
+			}
+
+			rs.close();
+			stmt.close();
+
+			return null;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private Usuario populaUsuario(ResultSet rs) throws SQLException {
+		Usuario usuario = new Usuario();
+		
+		// popula o objeto tarefa
+		usuario.setId(rs.getLong("id"));
+		usuario.setLogin(rs.getString("nome"));
+		
+		return usuario;
+	}
 }

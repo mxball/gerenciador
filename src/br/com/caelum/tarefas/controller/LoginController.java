@@ -27,7 +27,7 @@ public class LoginController {
 	@RequestMapping("efetuaLogin")
 	public String efetuaLogin(Usuario usuario, HttpSession session) {
 		if (usuarioDao.existeUsuario(usuario)) {
-			session.setAttribute("usuarioLogado", usuario);
+			session.setAttribute("usuarioLogado", usuarioDao.busca(usuario.getLogin()));
 			return "menu";
 		}
 		return "redirect:loginForm";

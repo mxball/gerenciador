@@ -1,9 +1,13 @@
 package br.com.caelum.tarefas.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Equipe {
 
 	private int id;
 	private String nome;
+	private List<Usuario> usuarios = new ArrayList<Usuario>();
 	
 	public int getId() {
 		return id;

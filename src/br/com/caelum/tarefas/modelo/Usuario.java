@@ -1,11 +1,15 @@
 package br.com.caelum.tarefas.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuario {
 	
-	private int id;
+	private Long id;
 	private String nome;
 	private String senha;
 	private String descricao;
+	private List<Equipe> equipes = new ArrayList<Equipe>();
 
 	public String getLogin() {
 		return nome;
@@ -31,11 +35,11 @@ public class Usuario {
 		this.descricao = descricao;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 }

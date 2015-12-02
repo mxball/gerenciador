@@ -10,6 +10,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.caelum.tarefas.modelo.Equipe;
@@ -20,6 +21,7 @@ public class EquipeDao {
 
 	private Connection connection;
 
+	
 	@Autowired
 	public EquipeDao(DataSource dataSource) {
 		try {

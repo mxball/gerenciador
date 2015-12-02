@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.caelum.tarefas.dao.TarefaDao;
 import br.com.caelum.tarefas.modelo.Projeto;
+import br.com.caelum.tarefas.modelo.Status;
 import br.com.caelum.tarefas.modelo.Tarefa;
 import br.com.caelum.tarefas.modelo.Usuario;
 
@@ -19,6 +21,8 @@ public class TarefasController {
 
 		private TarefaDao dao;
 
+		@Autowired private RedisTemplate< String, Object > template;
+	
 		@Autowired
 		public TarefasController(TarefaDao dao) {
 			this.dao = dao;
@@ -37,7 +41,7 @@ public class TarefasController {
 		
 		@RequestMapping("adicionaTarefaPessoal")
 		public String adicionaTPessoal(Tarefa tarefa, HttpSession session) {
-			tarefa.setStatus("ToDo");
+			tarefa.setStatus(Status.ToDo);
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
 			tarefa.setUsuario_id(usuario.getId());
 			dao.adiciona(tarefa);
@@ -46,7 +50,7 @@ public class TarefasController {
 		
 		@RequestMapping("adicionaTarefaProjeto")
 		public String adicionaTProjeto(Tarefa tarefa, HttpSession session) {
-			tarefa.setStatus("ToDo");
+			tarefa.setStatus(Status.ToDo);
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
 			tarefa.setUsuario_id(null);
 			dao.adiciona(tarefa);
@@ -58,6 +62,7 @@ public class TarefasController {
 		public String lista(Model model, HttpSession session) {
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
 			model.addAttribute("tarefas", dao.lista(usuario));
+			model.addAttribute("todosStatus", Status.values());
 			return "tarefa/lista";
 		}
 		
@@ -82,6 +87,12 @@ public class TarefasController {
 		@RequestMapping("ok")
 		public String ok(@ModelAttribute("tarefa") Tarefa tarefa, @ModelAttribute("usuario") Usuario usuario) {
 			return "tarefa/adicionada";
+		}
+		
+		@RequestMapping("alteraStatus")
+		public String altera(Tarefa tarefa, HttpSession session){
+			dao.updateStatus(tarefa);
+			return "redirect:listaTarefas";
 		}
 		
 }

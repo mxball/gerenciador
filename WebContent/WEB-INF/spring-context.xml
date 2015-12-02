@@ -21,15 +21,35 @@
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-		<property name="url" value="jdbc:postgresql://localhost/tarefas?currentSchema=gerenciador_tarefas"/>
-		<property name="username" value="postgres"/>
-		<property name="password" value="mayra"/>
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url"
+			value="jdbc:postgresql://localhost/tarefas?currentSchema=gerenciador_tarefas" />
+		<property name="username" value="postgres" />
+		<property name="password" value="mayra" />
 	</bean>
 
-	<mvc:default-servlet-handler/>
+	<!-- Create Factory -->
+	<bean id="jedisFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="localhost" />
+		<property name="port" value="6370" />
+		<property name="timeout" value="5000" />
+	</bean>
+
+	<!-- Create Redis Template -->
+	<bean id="redisRemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisFactory" />
+	</bean>
+
+	<!-- Your Service class -->
+	<bean id="serviceClass" class="RedisService">
+		<property name="redisTemplate" ref="redisRemplate" />
+	</bean>
+
+	<mvc:default-servlet-handler />
 	<mvc:interceptors>
-		<bean class="br.com.caelum.tarefas.interceptor.AutorizadorInterceptor"/>
+		<bean class="br.com.caelum.tarefas.interceptor.AutorizadorInterceptor" />
 	</mvc:interceptors>
 </beans>

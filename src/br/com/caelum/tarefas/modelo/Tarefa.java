@@ -14,7 +14,8 @@ public class Tarefa {
 	private Calendar dtFim;
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Calendar dtPrazo;
-	private String status;
+	private Status status;
+	private Tipo tipo;
 	
 	private Long usuario_id;
 	private Long projeto_id;
@@ -49,10 +50,10 @@ public class Tarefa {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	public Long getUsuario_id() {
@@ -66,6 +67,12 @@ public class Tarefa {
 	}
 	public void setProjeto_id(Long projeto_id) {
 		this.projeto_id = projeto_id;
+	}
+	public Tipo getTipo() {
+		return tipo;
+	}
+	public void setTipo(Tipo tipo) {
+		this.tipo = tipo;
 	}
 	
 }

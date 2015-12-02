@@ -33,7 +33,7 @@
 				<tr id="tarefa_${tarefa.id}">
                     <caelum:tarefa status="ToDo" tarefa="${tarefa}"></caelum:tarefa>
                     <caelum:tarefa status="Doing" tarefa="${tarefa}"></caelum:tarefa>
-                    <caelum:tarefa status="Unit Test" tarefa="${tarefa}"></caelum:tarefa>
+                    <caelum:tarefa status="UnitTest" tarefa="${tarefa}"></caelum:tarefa>
                     <caelum:tarefa status="Approving" tarefa="${tarefa}"></caelum:tarefa>
                     <caelum:tarefa status="Done" tarefa="${tarefa}"></caelum:tarefa>
 				</tr>

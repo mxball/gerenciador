@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.caelum.tarefas.modelo.Projeto;
+import br.com.caelum.tarefas.modelo.Status;
 import br.com.caelum.tarefas.modelo.Tarefa;
+import br.com.caelum.tarefas.modelo.Tipo;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
@@ -34,8 +36,8 @@ public class TarefaDao {
 
 	public void adiciona(Tarefa tarefa) {
 		String sql = "insert into tarefa "
-				+ "(descricao, dtInicio, dtFim, dtPrazo, status, usuario_id, projeto_id) "
-				+ "values (?,?,?,?,?,?,?)";
+				+ "(descricao, dtInicio, dtFim, dtPrazo, status, tipo, usuario_id, projeto_id) "
+				+ "values (?,?,?,?,?,?,?,?)";
 		
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
@@ -43,19 +45,19 @@ public class TarefaDao {
 			stmt.setDate(2, new Date(tarefa.getDtInicio().getTimeInMillis()));
 			stmt.setDate(3, new Date(tarefa.getDtFim().getTimeInMillis()));
 			stmt.setDate(4, new Date(tarefa.getDtPrazo().getTimeInMillis()));
-			stmt.setString(5, tarefa.getStatus());
+			stmt.setString(5, tarefa.getStatus().getName());
+			stmt.setString(6, tarefa.getTipo().getName());
 			if(tarefa.getUsuario_id() != null){
-				System.out.println("Porqueee!!!!");
-				stmt.setLong(6, tarefa.getUsuario_id());
-			}
-			else {
-				stmt.setNull(6, Types.INTEGER);
-			}
-			if(tarefa.getProjeto_id() != null){
-				stmt.setLong(7, tarefa.getProjeto_id());
+				stmt.setLong(7, tarefa.getUsuario_id());
 			}
 			else {
 				stmt.setNull(7, Types.INTEGER);
+			}
+			if(tarefa.getProjeto_id() != null){
+				stmt.setLong(8, tarefa.getProjeto_id());
+			}
+			else {
+				stmt.setNull(8, Types.INTEGER);
 			}
 			
 		
@@ -179,7 +181,8 @@ public class TarefaDao {
 		// popula o objeto tarefa
 		tarefa.setId(rs.getLong("id"));
 		tarefa.setDescricao(rs.getString("descricao"));
-		tarefa.setStatus(rs.getString("status"));
+		tarefa.setStatus(Status.valueOf(rs.getString("status")));
+		tarefa.setTipo(Tipo.valueOf(rs.getString("tipo")));
 		tarefa.setProjeto_id(rs.getLong("projeto_id"));
 		tarefa.setUsuario_id(rs.getLong("usuario_id"));
 
@@ -204,6 +207,22 @@ public class TarefaDao {
 		}
 		
 		return tarefa;
+	}
+
+	public void updateStatus(Tarefa tarefa) {
+		try {
+			String sql = "update Tarefa set status = ? where id = ?";
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			System.out.println(tarefa.getStatus());
+			stmt.setString(1, tarefa.getStatus().getName());
+			stmt.setLong(2, tarefa.getId());
+			stmt.execute();
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

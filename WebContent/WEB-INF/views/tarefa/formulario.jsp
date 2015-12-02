@@ -10,6 +10,9 @@
 		Data inicio:<input type="date" name="dtInicio" id="dtInicio" value="${tarefa.dtInicio.time}"><br>
 		Data fim:<input type="date" name="dtFim" id="dtFim" value="${tarefa.dtFim.time}"><br>
 		Data prazo:<input type="date" name="dtPrazo" id="dtPrazo" value="${tarefa.dtPrazo.time}"><br>
+        <select name="${tarefa.tipo}">
+            <option value="Java">Java</option>
+        </select> 
 		<input type="submit" value="Adicionar">
 	</form>
 </body>

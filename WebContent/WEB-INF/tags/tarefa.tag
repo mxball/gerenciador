@@ -16,8 +16,19 @@
 		<p>Prazo:
 			<fmt:formatDate value="${tarefa.dtPrazo.time}" pattern="dd/MM/yyyy" />
 		</p>
-		<p>
-		   <a href="alteraStatus?id=${tarefa.id}">Status</a>
+		<p>Status:
+		<form action="alteraStatus">
+		    <input type="hidden" name="id" value="${tarefa.id}">
+   			<select name=status>
+		           <c:forEach items="${todosStatus}" var="status" >
+		               <option value="${status.name}" ${tarefa.status.name eq status.name ? 'selected' : ''}>
+		                   ${status.name}
+		               </option>
+		           </c:forEach>
+			</select>
+			<input type="submit" value="alterar">
+		</form>
+		<a href="altera?id="></a>
 		</p>
 		<p>
 			<a href="removeTarefa?id=${tarefa.id}">Remover</a>

@@ -121,4 +121,17 @@ public class UsuarioDao {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public void cadastra(Usuario usuario) {
+		try {
+			PreparedStatement stmt = connection.prepareStatement("insert into usuario (nome, senha) values (?,?)");
+			stmt.setString(1, usuario.getLogin());
+			stmt.setString(2, usuario.getSenha());
+			stmt.execute();
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

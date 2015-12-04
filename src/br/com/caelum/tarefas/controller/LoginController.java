@@ -39,4 +39,16 @@ public class LoginController {
 		return "redirect:loginForm";
 	}
 	
+	@RequestMapping("cadastro")
+	public String formCadastro(){
+		return "cadastro";
+	}
+	
+	@RequestMapping("cadastraUsuario")
+	public String cadastroUsuario(Usuario usuario, HttpSession session){
+		usuarioDao.cadastra(usuario);
+		session.setAttribute("usuarioLogado", usuarioDao.busca(usuario.getLogin()));
+		return "menu";
+	}
+	
 }

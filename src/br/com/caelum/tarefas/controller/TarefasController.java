@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import br.com.caelum.tarefas.dao.RedisDao;
 import br.com.caelum.tarefas.dao.TarefaDao;
 import br.com.caelum.tarefas.modelo.Projeto;
 import br.com.caelum.tarefas.modelo.Status;
@@ -48,6 +49,8 @@ public class TarefasController {
 			tarefa.setStatus(Status.ToDo);
 			Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
 			tarefa.setUsuario_id(usuario.getId());
+			RedisDao rDao = new RedisDao();
+			rDao.setTipoTarefaUsuario(usuario, tarefa.getTipo());
 			dao.adiciona(tarefa);
 			return "tarefa/adicionada";
 		}
@@ -77,7 +80,7 @@ public class TarefasController {
 		}
 		
 		@RequestMapping("mostraTarefa")
-		public String mostra(Long id, Model model) {
+		public String mostra(Long id, Model model, HttpSession session) {
 			model.addAttribute("tarefa", dao.buscaPorId(id));
 			return "tarefa/mostra";
 		}

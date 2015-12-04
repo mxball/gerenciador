@@ -39,8 +39,5 @@ x<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 		<p>
 			<a href="mostraTarefa?id=${tarefa.id}">Mostra</a>
 		</p>
-		<p>
-			<a href="#" onclick="excluiAgora(${tarefa.id})"> Exclui agora! </a>
-		</p>
 	</c:if>
 </td>

@@ -34,10 +34,14 @@ public class RedisDao {
 		jedis.set(u, "1");
 	}
 	
-	public void getTipoTarefaUsuario(Usuario usuario, Tipo tipo){
+	public String getTipoTarefaUsuario(Usuario usuario, Tipo tipo){
 		String u = "usuario_" + usuario.getId() + ":tarefa_" + tipo.getName();
 		String valor = jedis.get(u);
-		System.out.println(valor);
+		if(valor == null){
+			valor = "0";
+		}
+		System.out.println(tipo.getName() + ": " + valor);
+		return tipo.getName() + ": " + valor;
 	}
 	
 	

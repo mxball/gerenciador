@@ -17,7 +17,7 @@
 		}
 	</script>
 	<a href="novaTarefa">Criar nova tarefa</a>
-	<br/><br/>
+	<br><br>
 	<table>
 		<thead>
 			<tr>

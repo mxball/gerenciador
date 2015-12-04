@@ -11,6 +11,7 @@ import br.com.caelum.tarefas.dao.ProjetoDao;
 import br.com.caelum.tarefas.dao.TarefaDao;
 import br.com.caelum.tarefas.modelo.Equipe;
 import br.com.caelum.tarefas.modelo.Projeto;
+import br.com.caelum.tarefas.modelo.Status;
 
 @Controller
 public class ProjetoController {
@@ -46,6 +47,7 @@ public class ProjetoController {
 	@RequestMapping("projeto/{id}")
 	public String mostra(@PathVariable int id, Model model){
 		Projeto projeto = pDao.buscaPorId(id);
+		model.addAttribute("todosStatus", Status.values());
 		model.addAttribute("tarefas", tDao.lista(projeto));
 		model.addAttribute("projeto", projeto);
 		return "projeto/mostra";

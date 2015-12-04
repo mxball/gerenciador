@@ -1,5 +1,6 @@
 package br.com.caelum.tarefas.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -14,6 +15,7 @@ import br.com.caelum.tarefas.dao.TarefaDao;
 import br.com.caelum.tarefas.modelo.Projeto;
 import br.com.caelum.tarefas.modelo.Status;
 import br.com.caelum.tarefas.modelo.Tarefa;
+import br.com.caelum.tarefas.modelo.Tipo;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Controller
@@ -29,13 +31,15 @@ public class TarefasController {
 		}
 	
 		@RequestMapping("novaTarefa")
-		public String form() {
+		public String form(Model model) {
+			model.addAttribute("todosTipos", Tipo.values());
 			return "tarefa/formulario";
 		}
 		
 		@RequestMapping("novaTarefaProjeto")
 		public String formProjeto(Projeto projeto, Model model) {
 			model.addAttribute("projeto", projeto);
+			model.addAttribute("todosTipos", Tipo.values());
 			return "projeto/form";
 		}
 		
@@ -90,9 +94,9 @@ public class TarefasController {
 		}
 		
 		@RequestMapping("alteraStatus")
-		public String altera(Tarefa tarefa, HttpSession session){
+		public String altera(Tarefa tarefa, HttpSession session, HttpServletRequest request){
 			dao.updateStatus(tarefa);
-			return "redirect:listaTarefas";
+			return "redirect:" + request.getHeader("Referer");
 		}
 		
 }

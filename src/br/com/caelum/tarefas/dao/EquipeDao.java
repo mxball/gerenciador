@@ -97,33 +97,4 @@ public class EquipeDao {
 		return null;
 	}
 
-	public void adicionaPermissao(Equipe equipe, String string) {
-		try {
-			String sql = "grant insert on " + equipe.getNome() + " to " + string;
-			PreparedStatement stmt = connection.prepareStatement(sql);
-			System.out.println(stmt);
-			stmt.execute();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void createView(Equipe equipe) {
-		try {
-			String sql = "create or replace view " + equipe.getNome() + " as "
-					+ "select * from pertence_a p "
-					+ "where p.equipe_id = " +equipe.getId();
-			PreparedStatement stmt = connection.prepareStatement(sql);
-			stmt.execute();
-			stmt.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 }

@@ -77,7 +77,6 @@ public class EquipeController {
 		List<Equipe> equipes = equipeDao.buscaPorNome(equipe);
 		gDao.adicionaGerente(equipes.get(0), usuario);
 		equipeDao.adicionaUsuario(equipes.get(0).getId(), usuario.getId());
-		equipeDao.createView(equipes.get(0));
 		return "equipe/equipeAdicionada";
 	}
 	
@@ -99,22 +98,4 @@ public class EquipeController {
 		return "equipe/usuarioAdicionado";
 	}
 	
-	@RequestMapping("equipe/editaPermissoes")
-	public String permissoesForm(Equipe equipe, Model model, HttpSession session){
-		Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
-		long gerente = gDao.getGerente(equipe);
-		if(usuario.getId() == gerente){
-			model.addAttribute("usuarios", uDao.lista(equipe));
-			model.addAttribute("equipe", equipe);
-			return "equipe/formPermissoes";
-		}
-		return "equipe/naoAutorizado";
-	}
-	
-	@RequestMapping("equipe/cadastraPermissao")
-	public String adicionaPermissoes(UsuarioEquipe usuarioEquipe, Model model, HttpSession session){
-		Equipe equipe = equipeDao.buscaPorId(usuarioEquipe.getEquipe_id());
-		equipeDao.adicionaPermissao(equipe, usuarioEquipe.getUsuario_nome());
-		return "equipe/permissaoAdicionada";
-	}
 }

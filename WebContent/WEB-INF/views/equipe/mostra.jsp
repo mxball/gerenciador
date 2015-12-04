@@ -8,7 +8,6 @@
 	   </c:forEach>
 	</ul>
 	<a href="adicionaMembro?id=${equipe.id}">Clique aqui</a> para adicionar um mebmro a equipe<br>
-	<a href="editaPermissoes?id=${equipe.id}">Clique aquie</a> para editar as permissoes dos usuario<br>
     <a href="../novoProjeto?id=${equipe.id}">Clique aqui</a> para cadastrar um novo projeto><br><br>
     Projetos:<ul>
 	   <c:forEach items="${projetos}" var="projeto">

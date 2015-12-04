@@ -1,12 +1,9 @@
-
 package br.com.caelum.tarefas.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -17,12 +14,13 @@ import br.com.caelum.tarefas.modelo.Equipe;
 import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
-public class PertenceADao {
-
+public class GerenteDao {
+	
 	private Connection connection;
 
+	
 	@Autowired
-	public PertenceADao(DataSource dataSource) {
+	public GerenteDao(DataSource dataSource) {
 		try {
 			this.connection = dataSource.getConnection();
 		} catch (SQLException e) {
@@ -30,29 +28,36 @@ public class PertenceADao {
 		}
 	}
 	
-	public List<Equipe> getEquipeDoUsuario(Usuario usuario){
+	public void adicionaGerente(Equipe equipe, Usuario usuario){
 		try {
-			String sql = "select e.id,e.nome from pertence_a p right join equipe e"
-					+ " on p.equipe_id = e.id "
-					+ " where p.usuario_id = ?";
+			String sql = "insert into gerente_gerencia_equipe "
+					+ "values (?,?)";
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			stmt.setLong(1, usuario.getId());
-			ResultSet set = stmt.executeQuery();
-			List<Equipe> list = new ArrayList<Equipe>();
-			while (set.next()) {
-				Equipe equipe = new Equipe();
-				equipe.setId(set.getLong(1));
-				equipe.setNome(set.getString(2));
-				list.add(equipe);
-			}
+			stmt.setLong(1, equipe.getId());
+			stmt.setLong(2, usuario.getId());
+			stmt.execute();
 			stmt.close();
-			return list;
-			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+	}
+	
+	public long getGerente(Equipe equipe){
+		try {
+			String sql = "select * from gerente_gerencia_equipe "
+				+ "where equipe_id = ? ";
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setLong(1, equipe.getId());
+			ResultSet set = stmt.executeQuery();
+			set.next();
+			return set.getLong("usuario_id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
 		
 	}
+
 }

@@ -6,17 +6,17 @@ import java.util.List;
 public class Usuario {
 	
 	private Long id;
-	private String nome;
+	private String login;
 	private String senha;
 	private String descricao;
 	private List<Equipe> equipes = new ArrayList<Equipe>();
 
 	public String getLogin() {
-		return nome;
+		return login;
 	}
 
 	public void setLogin(String login) {
-		this.nome = login;
+		this.login = login;
 	}
 
 	public String getSenha() {

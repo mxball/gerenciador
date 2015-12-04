@@ -30,24 +30,6 @@
 		<property name="password" value="mayra" />
 	</bean>
 
-	<!-- Create Factory -->
-	<bean id="jedisFactory"
-		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
-		<property name="hostName" value="localhost" />
-		<property name="port" value="6370" />
-		<property name="timeout" value="5000" />
-	</bean>
-
-	<!-- Create Redis Template -->
-	<bean id="redisRemplate" class="org.springframework.data.redis.core.RedisTemplate">
-		<property name="connectionFactory" ref="jedisFactory" />
-	</bean>
-
-	<!-- Your Service class -->
-	<bean id="serviceClass" class="RedisService">
-		<property name="redisTemplate" ref="redisRemplate" />
-	</bean>
-
 	<mvc:default-servlet-handler />
 	<mvc:interceptors>
 		<bean class="br.com.caelum.tarefas.interceptor.AutorizadorInterceptor" />

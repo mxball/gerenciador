@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.caelum.tarefas.dao.EquipeDao;
 import br.com.caelum.tarefas.dao.EquipeProjetoDao;
+import br.com.caelum.tarefas.dao.GerenteDao;
 import br.com.caelum.tarefas.dao.PertenceADao;
 import br.com.caelum.tarefas.dao.ProjetoDao;
+import br.com.caelum.tarefas.dao.UsuarioDao;
 import br.com.caelum.tarefas.modelo.Equipe;
 import br.com.caelum.tarefas.modelo.Projeto;
 import br.com.caelum.tarefas.modelo.Usuario;
+import br.com.caelum.tarefas.modelo.UsuarioEquipe;
 
 @Controller
 public class EquipeController {
@@ -26,13 +29,18 @@ public class EquipeController {
 	private PertenceADao pDao;
 	private EquipeProjetoDao epDao;
 	private ProjetoDao proDao;
+	private GerenteDao gDao;
+	private UsuarioDao uDao;
 
 	@Autowired
-	public EquipeController(EquipeDao equipeDao, PertenceADao pDao, EquipeProjetoDao epDao, ProjetoDao proDao) {
+	public EquipeController(EquipeDao equipeDao, PertenceADao pDao, EquipeProjetoDao epDao, 
+							ProjetoDao proDao, GerenteDao gDao, UsuarioDao uDao) {
 		this.pDao = pDao;
 		this.equipeDao = equipeDao;
 		this.epDao = epDao;
 		this.proDao = proDao;
+		this.gDao = gDao;
+		this.uDao = uDao;
 	}
 	
 	@RequestMapping("novaEquipe")
@@ -49,16 +57,15 @@ public class EquipeController {
 	}
 	
 	@RequestMapping("equipe/{id}")
-	public String acessaEquipe(@PathVariable int id, Model model){
-		List<Equipe> equipes = equipeDao.buscaPorId(id);
-		Equipe equipe = equipes.get(0);
+	public String acessaEquipe(@PathVariable Long id, Model model){
+		Equipe equipe = equipeDao.buscaPorId(id);
+		model.addAttribute("usuarios", uDao.listaUsuarioDaEquipe(equipe));
 		model.addAttribute("equipe", equipe);
 		List<Integer> idProjetos = epDao.getIdProjetos(equipe);
 		List<Projeto> projetos = new ArrayList<Projeto>();
 		for (Integer pId : idProjetos) {
 			projetos.add(proDao.buscaPorId(pId));
 		}
-		System.out.println("numero de projetos: " + projetos.size());
 		model.addAttribute("projetos", projetos);
 		return "equipe/mostra";
 	}
@@ -68,13 +75,46 @@ public class EquipeController {
 		equipeDao.adiciona(equipe);
 		Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
 		List<Equipe> equipes = equipeDao.buscaPorNome(equipe);
-		equipeDao.adicionaUsuario(equipes.get(0), usuario);
+		gDao.adicionaGerente(equipes.get(0), usuario);
+		equipeDao.adicionaUsuario(equipes.get(0).getId(), usuario.getId());
+		equipeDao.createView(equipes.get(0));
 		return "equipe/equipeAdicionada";
 	}
 	
-	public String adicionaUsuario(Model model, HttpSession session, Equipe equipe, Usuario usuario) {
-		equipeDao.adicionaUsuario(equipe, usuario);
-		model.addAttribute("equipe", equipe);
-		return "usuarioAdicionado";
+	@RequestMapping("equipe/adicionaMembro")
+	public String membroForm(Equipe equipe, Model model, HttpSession session){
+		Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+		long gerente = gDao.getGerente(equipe);
+		if(usuario.getId() == gerente){
+			model.addAttribute("usuarios", uDao.lista(equipe));
+			model.addAttribute("equipe", equipe);
+			return "equipe/formMembro";
+		}
+		return "equipe/naoAutorizado";
+	}
+	
+	@RequestMapping("equipe/cadastraUsuario")
+	public String adicionaUsuario(Model model, HttpSession session, UsuarioEquipe usuarioEquipe) {
+		equipeDao.adicionaUsuario(usuarioEquipe.getEquipe_id(), usuarioEquipe.getUsuario_id());
+		return "equipe/usuarioAdicionado";
+	}
+	
+	@RequestMapping("equipe/editaPermissoes")
+	public String permissoesForm(Equipe equipe, Model model, HttpSession session){
+		Usuario usuario = (Usuario) session.getAttribute("usuarioLogado");
+		long gerente = gDao.getGerente(equipe);
+		if(usuario.getId() == gerente){
+			model.addAttribute("usuarios", uDao.lista(equipe));
+			model.addAttribute("equipe", equipe);
+			return "equipe/formPermissoes";
+		}
+		return "equipe/naoAutorizado";
+	}
+	
+	@RequestMapping("equipe/cadastraPermissao")
+	public String adicionaPermissoes(UsuarioEquipe usuarioEquipe, Model model, HttpSession session){
+		Equipe equipe = equipeDao.buscaPorId(usuarioEquipe.getEquipe_id());
+		equipeDao.adicionaPermissao(equipe, usuarioEquipe.getUsuario_nome());
+		return "equipe/permissaoAdicionada";
 	}
 }

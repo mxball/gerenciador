@@ -21,7 +21,7 @@ public class TarefasController {
 
 		private TarefaDao dao;
 
-		@Autowired private RedisTemplate< String, Object > template;
+		private RedisTemplate< String, Object > template;
 	
 		@Autowired
 		public TarefasController(TarefaDao dao) {

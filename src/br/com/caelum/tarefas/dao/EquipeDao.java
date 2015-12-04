@@ -10,18 +10,15 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.caelum.tarefas.modelo.Equipe;
-import br.com.caelum.tarefas.modelo.Usuario;
 
 @Repository
 public class EquipeDao {
 
 	private Connection connection;
 
-	
 	@Autowired
 	public EquipeDao(DataSource dataSource) {
 		try {
@@ -30,11 +27,12 @@ public class EquipeDao {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public void adiciona(Equipe equipe){
+
+	public void adiciona(Equipe equipe) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("insert into Equipe "
-					+ "(nome) values (?)");
+			PreparedStatement stmt = connection
+					.prepareStatement("insert into Equipe "
+							+ "(nome) values (?)");
 			stmt.setString(1, equipe.getNome());
 			stmt.execute();
 			stmt.close();
@@ -42,13 +40,14 @@ public class EquipeDao {
 			e.printStackTrace();
 		}
 	}
-	
-	public void adicionaUsuario(Equipe equipe, Usuario usuario) {
+
+	public void adicionaUsuario(Long equipeID, Long usuarioId) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("insert into pertence_a "
-					+ "values (?,?)");
-			stmt.setLong(1, equipe.getId());
-			stmt.setLong(2, usuario.getId());
+			PreparedStatement stmt = connection
+					.prepareStatement("insert into pertence_a "
+							+ "values (?,?)");
+			stmt.setLong(1, equipeID);
+			stmt.setLong(2, usuarioId);
 			stmt.execute();
 			stmt.close();
 		} catch (SQLException e) {
@@ -56,21 +55,20 @@ public class EquipeDao {
 		}
 	}
 
-	public List<Equipe> buscaPorId(int id) {
+	public Equipe buscaPorId(Long id) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("select * from Equipe where id = ?");
-			stmt.setInt(1, id);
+			PreparedStatement stmt = connection
+					.prepareStatement("select * from Equipe where id = ?");
+			stmt.setLong(1, id);
 			ResultSet set = stmt.executeQuery();
-			List<Equipe> lista = new ArrayList<Equipe>();
-			
+
 			while (set.next()) {
 				Equipe equipe = new Equipe();
 				equipe.setId(set.getLong(1));
 				equipe.setNome(set.getString(2));
-				lista.add(equipe);
+				return equipe;
 			}
 			stmt.close();
-			return lista;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -79,11 +77,12 @@ public class EquipeDao {
 
 	public List<Equipe> buscaPorNome(Equipe equipe) {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("select * from Equipe where nome like ?");
+			PreparedStatement stmt = connection
+					.prepareStatement("select * from Equipe where nome like ?");
 			stmt.setString(1, equipe.getNome());
 			ResultSet set = stmt.executeQuery();
 			List<Equipe> lista = new ArrayList<Equipe>();
-			
+
 			while (set.next()) {
 				Equipe equipeLoaded = new Equipe();
 				equipeLoaded.setId(set.getLong(1));
@@ -95,6 +94,36 @@ public class EquipeDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;		
+		return null;
+	}
+
+	public void adicionaPermissao(Equipe equipe, String string) {
+		try {
+			String sql = "grant insert on " + equipe.getNome() + " to " + string;
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			System.out.println(stmt);
+			stmt.execute();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void createView(Equipe equipe) {
+		try {
+			String sql = "create or replace view " + equipe.getNome() + " as "
+					+ "select * from pertence_a p "
+					+ "where p.equipe_id = " +equipe.getId();
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.execute();
+			stmt.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
